@@ -6,20 +6,12 @@ import {
 import gulp from 'gulp';
 import plumber from 'gulp-plumber';
 
-import rename from 'gulp-rename';
-
 import * as dartSass from 'sass';
 import gulpSass from 'gulp-sass';
 import postcss from 'gulp-postcss';
 import postUrl from 'postcss-url';
 import autoprefixer from 'autoprefixer';
-import csso from 'postcss-csso';
 import gcmq from 'gulp-group-css-media-queries';
-
-import {
-	nunjucksCompile
-} from 'gulp-nunjucks';
-import htmlmin from 'gulp-htmlmin';
 
 import babel from 'gulp-babel';
 import minify from 'gulp-minify';
@@ -99,24 +91,13 @@ export function styles() {
 				assetsPath: '../'
 			}),
 			autoprefixer(),
-			csso()
 		]))
-		.pipe(rename({
-			suffix: '.min'
-		}))
-		.pipe(dest(paths.styles.dest, {
-			sourcemaps: '.'
-		}))
+		.pipe(dest(paths.styles.dest))
 		.pipe(browserSync.stream());
 }
 
 export function html() {
 	return src(paths.html.src)
-		.pipe(nunjucksCompile())
-		.pipe(htmlmin({
-			removeComments: false,
-			collapseWhitespace: true
-		}))
 		.pipe(dest(paths.html.dest))
 		.pipe(browserSync.stream());
 }
@@ -164,78 +145,6 @@ export function build(done) {
 
 // дополнительные задачи
 
-import sharpResponsive from 'gulp-sharp-responsive';
-import imagemin, {
-	gifsicle,
-	mozjpeg,
-	optipng,
-	svgo
-} from 'gulp-imagemin';
-
-export function createRastr() {
-	return src([paths.img.resource + "/**/*.{jpg,png}"])
-		.pipe(sharpResponsive({
-			includeOriginalFile: true,
-			formats: [{
-				width: (metadata) => metadata.width * 2,
-				rename: {
-					suffix: "-2x"
-				},
-				jpegOptions: {
-					progressive: true
-				},
-			}, {
-				width: (metadata) => metadata.width * 2,
-				format: "webp",
-				rename: {
-					suffix: "-2x"
-				}
-			}, {
-				format: "webp"
-			}, ]
-		}))
-		.pipe(dest(paths.img.src + "/img/"));
-}
-
-export function optiImg() {
-	return src(paths.img.src + "/**/*.{png,jpg,svg}", {
-			base: paths.src
-		})
-		.pipe(imagemin([
-			gifsicle({
-				interlaced: true
-			}),
-			mozjpeg({
-				quality: 75,
-				progressive: true
-			}),
-			optipng({
-				optimizationLevel: 5
-			}),
-			svgo({
-				plugins: [{
-					name: 'cleanupIDs',
-					active: false
-				}, {
-					name: 'preset-default',
-					params: {
-						overrides: {
-							// customize options for plugins included in preset
-							convertPathData: {
-								floatPrecision: 2,
-								forceAbsolutePath: false,
-								utilizeAbsolute: false,
-							},
-							// or disable plugins
-							removeViewBox: false,
-						},
-					},
-				}]
-			})
-		]))
-		.pipe(dest(paths.img.src));
-}
-
 import ttf2woff2 from 'gulp-ttf2woff2';
 import ttf2woff from 'gulp-ttf2woff';
 
@@ -246,41 +155,4 @@ export function fonts() {
 	return src([paths.fonts.resource + '/*.ttf'])
 		.pipe(ttf2woff2())
 		.pipe(dest(paths.fonts.src));
-}
-
-import svgSprite from 'gulp-svg-sprite';
-
-const config = {
-	mode: {
-		symbol: {
-			dest: '.',
-			sprite: 'sprite.svg'
-		}
-	}
-};
-
-export function sprite() {
-	return src(paths.img.resourceSvg + "/*.svg")
-		.pipe(imagemin([svgo({
-			plugins: [{
-				name: 'cleanupIDs',
-				active: false
-			}, {
-				name: 'preset-default',
-				params: {
-					overrides: {
-						// customize options for plugins included in preset
-						convertPathData: {
-							floatPrecision: 2,
-							forceAbsolutePath: false,
-							utilizeAbsolute: false,
-						},
-						// or disable plugins
-						removeViewBox: false,
-					},
-				},
-			}]
-		})]))
-		.pipe(svgSprite(config))
-		.pipe(dest(paths.img.src + "/img/"));
 }

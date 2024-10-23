@@ -1,0 +1,15 @@
+.footer__container {
+	padding-top: 62px;
+	padding-bottom: 60px;
+}
+
+.footer__button {
+	width: 100%;
+	margin-left: auto;
+	margin-right: auto;
+	max-width: 430px;
+
+	@media (max-width:600px) {
+		width: fit-content;
+	}
+}

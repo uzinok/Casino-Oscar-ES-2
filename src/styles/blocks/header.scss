@@ -1,0 +1,26 @@
+.header {
+	position: sticky;
+	top: 0;
+	right: 0;
+	left: 0;
+	padding: 41px 15px 23px;
+	text-align: center;
+	background-color: #1c1c1c;
+
+	@media (max-width: 600px) {
+		padding-top: 23px;
+	}
+}
+
+.header__link {
+	font-size: 24px;
+	line-height: 37px;
+	color: inherit;
+	text-transform: uppercase;
+	text-decoration: none;
+
+	@media (max-width: 600px) {
+		font-size: 18px;
+		line-height: 28px;
+	}
+}
